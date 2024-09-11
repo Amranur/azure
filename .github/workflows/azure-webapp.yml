@@ -3,7 +3,7 @@ name: Deploy FastAPI to Azure Web App
 on:
   push:
     branches:
-      - main  # This triggers the workflow on push to the 'main' branch
+      - main  # Trigger workflow on push to the 'main' branch
 
 jobs:
   build-and-deploy:
@@ -14,19 +14,25 @@ jobs:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v2
 
-    # Set up Python
+    # Log in to Azure using the publish profile
+    - name: 'Login to Azure'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+
+    # Set up Python environment
     - name: 'Set up Python'
       uses: actions/setup-python@v2
       with:
         python-version: '3.9'
 
-    # Install dependencies from requirements.txt
+    # Install dependencies
     - name: 'Install dependencies'
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    # Archive files to create a ZIP for deployment
+    # Create a ZIP archive of the project files for deployment
     - name: 'Prepare for Azure deployment'
       run: zip -r myfastapiapp.zip .
 
@@ -34,7 +40,7 @@ jobs:
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2
       with:
-        app-name: 'newtest1'  
+        app-name: 'newtest1'  # Replace with your Azure Web App name
         slot-name: 'production'
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: './myfastapiapp.zip'
