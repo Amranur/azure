@@ -14,17 +14,11 @@ jobs:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v2
 
-    # Log in to Azure using the publish profile
-    - name: 'Login to Azure'
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-
     # Set up Python environment
     - name: 'Set up Python'
       uses: actions/setup-python@v2
       with:
-        python-version: '3.9'
+        python-version: '3.12'
 
     # Install dependencies
     - name: 'Install dependencies'
@@ -36,7 +30,7 @@ jobs:
     - name: 'Prepare for Azure deployment'
       run: zip -r myfastapiapp.zip .
 
-    # Deploy to Azure Web App
+    # Deploy to Azure Web App using the publish profile
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2
       with:
